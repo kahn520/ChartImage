@@ -7,12 +7,15 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
+using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Presentation;
 using NetOffice;
 using NetOffice.ExcelApi;
 using NetOffice.ExcelApi.Enums;
 using NetOffice.OfficeApi.Enums;
 using Application = NetOffice.ExcelApi.Application;
 using Encoder = System.Drawing.Imaging.Encoder;
+using Shape = NetOffice.ExcelApi.Shape;
 
 namespace ChartImage
 {
@@ -21,6 +24,9 @@ namespace ChartImage
         private static string _strOupPutPath;
         private static List<string[]> _listInfo;
         private static string _strInfoFile;
+        private static float _ratioRate = 1.6707616f;
+        private static string _strUserName;
+        private static string _strUserID;
 
         [STAThread]
         static void Main(string[] args)
@@ -41,6 +47,10 @@ namespace ChartImage
                     Console.WriteLine("标签文件错误");
                     continue;
                 }
+                Console.WriteLine("输入用户名：");
+                _strUserName = Console.ReadLine();
+                Console.WriteLine("输入用户ID：");
+                _strUserID = Console.ReadLine();
 
                 _listInfo = strsInfo.Select(s => s.Split('\t')).ToList();
 
@@ -48,9 +58,12 @@ namespace ChartImage
                 if (!Directory.Exists(_strOupPutPath))
                     Directory.CreateDirectory(_strOupPutPath);
 
-                _strInfoFile = _strOupPutPath + "info.txt";
+                _strInfoFile = _strOupPutPath + "docer_crtx.csv";
                 if (File.Exists(_strInfoFile))
                     File.Delete(_strInfoFile);
+
+                string strTitle = "标题,用户,用户名uid,文件类型1模版2素材3合集4视频,模板分类ID（请先后台添加）11681 折线图 11682 雷达图 11683 圆环图 11677 柱形图 11678 条形图 11679 饼图 11680 面积图,模板平台编号：金山云在线图表32768 类型 11335 内网在线图表 类型11335  11635,模版类型 1为普通 3为收费,模板标签（空格分隔）,实际文件名,价格";
+                File.WriteAllLines(_strInfoFile, new []{ strTitle }, Encoding.GetEncoding("GB2312"));
 
                 var files = Directory.GetFiles(strFolder, "*.*", SearchOption.TopDirectoryOnly);
                 files = files.Where(f => f.Contains(".xls") && !f.Contains("~$")).ToArray();
@@ -84,12 +97,18 @@ namespace ChartImage
                         ExportChart(shape, strFile);
                 }
             }
+            workbook.Close(MsoTriState.msoFalse);
         }
 
         static void ExportChart(Shape shape, string strFileName)
         {
+            //shape.Shadow.Visible = MsoTriState.msoFalse;
+            shape.Shadow.Size = 0;
+            shape.Height = shape.Width / _ratioRate;
             Chart chart = shape.Chart;
             string strName = chart.ChartTitle.Caption;
+            if (strName.Contains('\r'))
+                strName = strName.Split('\r')[0];
             int iSeriesCnt = (chart.SeriesCollection() as SeriesCollection).Count;
             string strChartSaveName = _strOupPutPath;
 
@@ -129,16 +148,28 @@ namespace ChartImage
             else if (infos.Count() != 1)
                 throw new Exception($"{strChartType}类型标签重复");
 
+            
+            List<string> listLine = new List<string>();
+            listLine.Add(strName);
+            listLine.Add(_strUserName);
+            listLine.Add(_strUserID);
+            listLine.Add("1");
+
             List<string> listInfo = infos.Single().ToList();
-            string strLine = strName + "\t";
-            strLine += listInfo[1] + "\t";
+            listLine.Add(listInfo[1]);
+
+            listLine.Add("32768");
+            listLine.Add("3");
+
             listInfo.RemoveAt(0);
             listInfo.RemoveAt(0);
             listInfo.Insert(0, iSeriesCnt.ToString());
-            strLine += string.Join(" ", listInfo);
-            strLine += "\r\n";
+            string strTag = string.Join(" ", listInfo);
+            listLine.Add(strTag);
+            listLine.Add(strName + ".crtx");
+            listLine.Add("9.99");
 
-            File.AppendAllText(_strInfoFile, strLine, Encoding.GetEncoding("GB2312"));
+            File.AppendAllLines(_strInfoFile, new[] {string.Join(",", listLine)}, Encoding.GetEncoding("GB2312"));
         }
 
         static string[] GetChartTypeInfo()
