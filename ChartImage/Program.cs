@@ -93,7 +93,16 @@ namespace ChartImage
             {
                 foreach (Shape shape in sheet.Shapes)
                 {
-                    if (shape.Type == MsoShapeType.msoChart)
+                    MsoShapeType typ = MsoShapeType.msoShapeTypeMixed;
+                    try
+                    {
+                        typ = shape.Type;
+                    }
+                    catch (Exception e)
+                    {
+                        continue;
+                    }
+                    if (typ == MsoShapeType.msoChart)
                         ExportChart(shape, strFile);
                 }
             }
