@@ -58,11 +58,11 @@ namespace ChartImage
                 if (!Directory.Exists(_strOupPutPath))
                     Directory.CreateDirectory(_strOupPutPath);
 
-                _strInfoFile = _strOupPutPath + "docer_crtx.csv";
+                _strInfoFile = _strOupPutPath + "docer_new_crtx.csv";
                 if (File.Exists(_strInfoFile))
                     File.Delete(_strInfoFile);
 
-                string strTitle = "标题,用户,用户名uid,文件类型1模版2素材3合集4视频,模板分类ID（请先后台添加）11681 折线图 11682 雷达图 11683 圆环图 11677 柱形图 11678 条形图 11679 饼图 11680 面积图,模板平台编号：金山云在线图表32768 类型 11335 内网在线图表 类型11335  11635,模版类型 1为普通 3为收费,模板标签（空格分隔）,实际文件名,价格";
+                string strTitle = "标题,用户,用户名uid,模板应用类型,模板分类ID（请先后台添加）11681 折线图 11682 雷达图 11683 圆环图 11677 柱形图 11678 条形图 11679 饼图 11680 面积图,模版类型 1为普通 3为收费,模板标签（空格分隔）,实际文件名,价格";
                 File.WriteAllLines(_strInfoFile, new []{ strTitle }, Encoding.GetEncoding("GB2312"));
 
                 var files = Directory.GetFiles(strFolder, "*.*", SearchOption.TopDirectoryOnly);
@@ -162,12 +162,11 @@ namespace ChartImage
             listLine.Add(strName);
             listLine.Add(_strUserName);
             listLine.Add(_strUserID);
-            listLine.Add("1");
+            listLine.Add("2");
 
             List<string> listInfo = infos.Single().ToList();
             listLine.Add(listInfo[1]);
 
-            listLine.Add("32768");
             listLine.Add("3");
 
             listInfo.RemoveAt(0);
@@ -176,7 +175,7 @@ namespace ChartImage
             string strTag = string.Join(" ", listInfo);
             listLine.Add(strTag);
             listLine.Add(strName + ".crtx");
-            listLine.Add("9.99");
+            listLine.Add("999");
 
             File.AppendAllLines(_strInfoFile, new[] {string.Join(",", listLine)}, Encoding.GetEncoding("GB2312"));
         }
