@@ -58,7 +58,7 @@ namespace ChartImage
                 if (!Directory.Exists(_strOupPutPath))
                     Directory.CreateDirectory(_strOupPutPath);
 
-                _strInfoFile = _strOupPutPath + "docer_new_crtx.csv";
+                _strInfoFile = _strOupPutPath + "docer_new_chart.csv";
                 if (File.Exists(_strInfoFile))
                     File.Delete(_strInfoFile);
 
