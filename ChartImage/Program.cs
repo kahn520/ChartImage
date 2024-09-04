@@ -7,11 +7,8 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
-using DocumentFormat.OpenXml.Packaging;
-using DocumentFormat.OpenXml.Presentation;
 using NetOffice;
 using NetOffice.ExcelApi;
-using NetOffice.ExcelApi.Enums;
 using NetOffice.OfficeApi.Enums;
 using Application = NetOffice.ExcelApi.Application;
 using Encoder = System.Drawing.Imaging.Encoder;
@@ -115,7 +112,7 @@ namespace ChartImage
             shape.Shadow.Size = 0;
             shape.Height = shape.Width / _ratioRate;
             Chart chart = shape.Chart;
-            string strName = chart.ChartTitle.Caption;
+            string strName = Path.GetFileName(strFileName);
             if (strName.Contains('\r'))
                 strName = strName.Split('\r')[0];
             int iSeriesCnt = (chart.SeriesCollection() as SeriesCollection).Count;
