@@ -31,3 +31,5 @@ xlStockVOHLC	12737	股价图	stock	成交量-开盘-盘高-盘低-收盘图	volume-open-high-lo
 xlRadar	11682	雷达图	radar	线型雷达图	radar
 xlRadarMarkers	11682	雷达图	radar	带数据标记的雷达图	radar-with-markers
 xlRadarFilled	11682	雷达图	radar	填充雷达图	filled-radar
+-4111	12666	组合图	combo	组合图	combo
+xl3DPie	12666	三维饼图	pie	饼图	3Dpie
